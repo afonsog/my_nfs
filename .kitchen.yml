@@ -1,0 +1,51 @@
+settings:
+  parallel: true
+
+driver:
+  name: vagrant
+  provision_command: curl -L http://www.chef.io/chef/install.sh | bash
+  privileged: true
+  use_sudo: false
+
+provisioner:
+  name: chef_zero
+  require_chef_omnibus: 12.8.1
+
+platforms:
+- name: bento/ubuntu-14.04
+  run_list:
+    - recipe[apt]
+
+suites:
+  - name: server-1
+    driver:
+      username: vagrant
+      password: vagrant
+      network:
+        - ["public_network", {bridge: 'wlp9s0', ip: "192.168.9.201"}]
+    run_list:
+      - recipe[my_nfs::server]
+  - name: server-2
+    driver:
+      username: vagrant
+      password: vagrant
+      network:
+        - ["public_network", {bridge: 'wlp9s0', ip: "192.168.9.202"}]
+    run_list:
+      - recipe[my_nfs::server]
+  - name: client-1 
+    driver:
+      username: vagrant
+      password: vagrant
+      network:
+        - ["public_network", {bridge: 'wlp9s0', ip: "192.168.9.203"}]
+    run_list:
+      - recipe[my_nfs]
+  - name: server-3
+    driver:
+      username: vagrant
+      password: vagrant
+      network:
+        - ["public_network", {bridge: 'wlp9s0', ip: "192.168.9.204"}]
+    run_list:
+      - recipe[my_nfs::server]
